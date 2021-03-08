@@ -1,16 +1,22 @@
 import dataclasses
+import time
 
 import cv2
 
 from monitor.capture import video_steam
 from monitor.ultraface.detector import UltrafaceDetector
-
+from monitor.utils import throttling_iterator
 
 face_detector = UltrafaceDetector()
 
 cv2.namedWindow("preview")
-for image in video_steam():
-    for face_start, face_end in face_detector(image):
+faces = []
+
+for image, do_detection in zip(video_steam(), throttling_iterator(0.2)):
+    if do_detection:
+        faces = list(face_detector(image))
+
+    for face_start, face_end in faces:
         color = (0, 255, 0)  # BGR
         thickness = 2  # px
         image = cv2.rectangle(image, face_start, face_end, color, thickness)
