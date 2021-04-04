@@ -1,4 +1,5 @@
-import pathlib2 as pathlib
+from pathlib2 import Path
+from typing import Tuple
 
 import onnxruntime as ort
 import numpy as np
@@ -8,16 +9,24 @@ from monitor.ultraface.box_utils import predict
 
 
 class UltrafaceDetector:
-    def __init__(self):
-        path = pathlib.Path(__file__).parent / "models" / "version-RFB-320.onnx"
-        print(path)
+    def __init__(self, path: Path, shape: Tuple[int, int]):
         self._face_detector = ort.InferenceSession(str(path))
+        self._input_shape = shape
         self._threshold = 0.7
+
+    @staticmethod
+    def make(option="small"):
+        if option == "small":
+            return UltrafaceDetector(
+                path=Path(__file__).parent / "models" / "version-RFB-320.onnx",
+                shape=(320, 240),
+            )
+        raise RuntimeError(f"UltrafaceDetector.make doesn't support {option}")
 
     def __call__(self, image):
         orig_image = image
         image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image, (320, 240))
+        image = cv2.resize(image, self._input_shape)
         image_mean = np.array([127, 127, 127])
         image = (image - image_mean) / 128
         image = np.transpose(image, [2, 0, 1])

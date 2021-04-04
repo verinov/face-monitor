@@ -1,26 +1,33 @@
-import dataclasses
-import time
-
 import cv2
 
 from monitor.capture import video_steam
 from monitor.ultraface.detector import UltrafaceDetector
-from monitor.utils import throttling_iterator
+from monitor.throttler import Throttler
 
-face_detector = UltrafaceDetector()
 
-cv2.namedWindow("preview")
-faces = []
+def main(consumer=None):
+    face_detector = UltrafaceDetector.make("small")
+    throttler = Throttler(1.0)
 
-for image, do_detection in zip(video_steam(), throttling_iterator(0.2)):
-    if do_detection:
-        faces = list(face_detector(image))
+    cv2.namedWindow("preview")
+    faces = []
 
-    for face_start, face_end in faces:
-        color = (0, 255, 0)  # BGR
-        thickness = 2  # px
-        image = cv2.rectangle(image, face_start, face_end, color, thickness)
-    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    cv2.imshow("preview", image)
+    for image in video_steam():
+        if throttler():
+            faces = list(face_detector(image))
+            if consumer is not None:
+                for start, end in faces:
+                    consumer(image[start[1] : end[1], start[0] : end[0]])
 
-cv2.destroyAllWindows()
+        for start, end in faces:
+            color = (0, 255, 0)  # BGR
+            thickness = 2  # px
+            image = cv2.rectangle(image, start, end, color, thickness)
+
+        cv2.imshow("preview", image)
+
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    main()
