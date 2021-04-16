@@ -17,6 +17,6 @@ class HaarFaceDetector(HaarDetector):
         super().__init__(cv2.haarcascades + "haarcascade_frontalface_default.xml")
 
 
-class HaarFaceDetector(HaarDetector):
+class HaarEyeDetector(HaarDetector):
     def __init__(self):
         super().__init__(cv2.haarcascades + "haarcascade_eye.xml")

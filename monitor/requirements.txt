@@ -1,2 +1,2 @@
-opencv-contrib-python==4.1.2.30 # 4.5.1.48 fails to exit
+opencv-contrib-python
 onnxruntime

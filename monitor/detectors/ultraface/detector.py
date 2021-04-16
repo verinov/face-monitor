@@ -1,11 +1,11 @@
-from pathlib2 import Path
+from pathlib import Path
 from typing import Tuple
 
 import onnxruntime as ort
 import numpy as np
 import cv2
 
-from monitor.ultraface.box_utils import predict
+from .box_utils import predict
 
 
 class UltrafaceDetector:
