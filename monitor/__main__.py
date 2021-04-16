@@ -1,7 +1,9 @@
-import time
-import functools
+from enum import Enum
+from pathlib import Path
+from typing import Optional
 
 import cv2
+import typer
 
 from monitor.capture import video_steam
 from monitor.detectors import UltrafaceDetector, HaarFaceDetector
@@ -72,8 +74,28 @@ def main(consumer=None, period_seconds=1.0, face_shape=None):
     cv2.destroyAllWindows()
 
 
-if __name__ == "__main__":
+app = typer.Typer()
+
+
+@app.command()
+def frames(
+    path: Path,
+    period: float = 0.5,
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+):
     from monitor.collectors import SQLiteFrameCollector
 
-    with SQLiteFrameCollector("images.db") as consumer:
-        main(consumer, 0.5, (180, 120))
+    face_shape = None if (height is None or width is None) else (height, width)
+
+    with SQLiteFrameCollector(path) as consumer:
+        main(consumer, period, face_shape)
+
+
+@app.command()
+def video(path: Path, period: float = 0.5):
+    raise NotImplementedError
+
+
+if __name__ == "__main__":
+    app()
