@@ -9,7 +9,7 @@ class HaarDetector:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         for x, y, w, h in self._classifier.detectMultiScale(gray, 1.1, 3):
             # image[y : y + h, x : x + w]
-            yield (x, y), (x + w, y + h)
+            yield x, y, x + w, y + h  # left, top, right, bottom
 
 
 class HaarFaceDetector(HaarDetector):

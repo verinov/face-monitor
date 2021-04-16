@@ -45,4 +45,4 @@ class UltrafaceDetector:
         for box, label, prob in zip(boxes, labels, probs):
             # image[box[1]:box[3], box[0]:box[2]]
             # print(label, prob, box[2] - box[0], box[3] - box[1])
-            yield (box[0], box[1]), (box[2], box[3])
+            yield tuple(box)  #  left, top, right, bottom

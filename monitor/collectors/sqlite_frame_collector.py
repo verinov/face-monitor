@@ -10,7 +10,6 @@ class SQLiteFrameCollector:
         self.connection = None
 
     def __enter__(self):
-
         self.connection = sqlite3.connect(self.db_path)
         self.connection.execute(
             """CREATE TABLE IF NOT EXISTS faces (timestamp real, image_png blob)"""
