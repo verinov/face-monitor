@@ -1,1 +1,2 @@
 from .sqlite_frame_collector import SQLiteFrameCollector
+from .video_collector import VideoCollector

@@ -7,6 +7,8 @@ import cv2
 
 from .box_utils import predict
 
+ort.set_default_logger_severity(3)
+
 
 class UltrafaceDetector:
     def __init__(self, path: Path, shape: Tuple[int, int]):
